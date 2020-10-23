@@ -6,8 +6,10 @@ import difflib
 
 data = json.load(open('data.json'))
 
+
 def definition(word):
     if word in data:
+        print(word)
         return(data[word])
     elif word.lower() in data:
         return (data[word.lower()])
@@ -17,9 +19,13 @@ def definition(word):
         return(data[word.upper()])
     else:
         try:
-            pass
-        except IndexError or TypeError:
-            return ['that is not in my dictionary. sorry']
+            alternative_word = [difflib.get_close_matches(word, data, n=1)]
+            word_alternate = str(alternative_word[0]).replace("['", "").replace("']", "")
+            data[word_alternate].insert(0, "Do you mean " + word_alternate + "?")
+            return(data[word_alternate])
+        except KeyError:
+            return(["Word not found available in this dictionary. Sorry"])
+
 
 def view_definition():
     list1.delete(0, END)
@@ -43,7 +49,7 @@ b2 = Button(window, text="Clear", width=12, command=delete)
 b2.grid(row=1, column=6)
 
 list1 = Listbox(window, height=6, width=55)
-list1.grid(row=2, column=1, rowspan=6, columnspan=7)
+list1.grid(row=3, column=1, rowspan=6, columnspan=7)
 
 sby = Scrollbar(window)
 sby.grid(row=2, column=7, rowspan=5)
@@ -59,3 +65,4 @@ sbx.configure(command=list1.xview)
 
 window.mainloop()
 
+print(definition('sets'))
